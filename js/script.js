@@ -381,7 +381,7 @@ function abortCreationMode() {
 }
 
 // #11 Ready function to house scripts that run when page is loaded
-$( document ).ready(function() {
+$(document).ready(function() {
   listChannels(compareNew);
   loadEmojis();
   showMessages();
