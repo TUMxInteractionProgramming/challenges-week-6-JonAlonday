@@ -391,14 +391,8 @@ $(document).ready(function() {
     event.preventDefault();
     if (event.keyCode === 13) {
         document.getElementById("button-send").click();
-    }
-  });
-
-  // #11 add counter to message on the onchange event of message
-  document.getElementById("message")
-    .addEventListener("keyup", function(event) {
-    event.preventDefault();
-    if (document.getElementById("message").value.length > 0) {
+    } // #11 add counter to message on the onchange event of message
+      else if (document.getElementById("message").value.length > 0) {
       document.getElementById("txtcounter").innerHTML =
       document.getElementById("message").value.length + "/140";
     } else {
