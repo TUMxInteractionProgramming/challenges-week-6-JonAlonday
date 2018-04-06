@@ -387,8 +387,7 @@ $(document).ready(function() {
   showMessages();
 
   // #11 add enter key to send message
-  document.getElementById("message")
-    .addEventListener("keyup", function(event) {
+  document.getElementById("message").addEventListener("keyup", function(event) {
     event.preventDefault();
     if (event.keyCode === 13) {
         document.getElementById("button-send").click();
@@ -398,7 +397,6 @@ $(document).ready(function() {
   // #11 add counter to message on the onchange event of message
   document.getElementById("message")
     .addEventListener("keyup", function(event) {
-    console.log(document.getElementById("message").value.length + "/140");
     event.preventDefault();
     if (document.getElementById("message").value.length > 0) {
       document.getElementById("txtcounter").innerHTML =
