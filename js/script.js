@@ -27,7 +27,7 @@ var currentLocation = {
  * Switch channels name in the right app bar
  * @param channelObject
  */
-function switchChannel(channelObject) {
+function switchChannel(channelObject, channelElement) {
     // Log the channel switch
     console.log("Tuning in to channel", channelObject);
 
@@ -52,10 +52,19 @@ function switchChannel(channelObject) {
     /* highlight the selected #channel.
        This is inefficient (jQuery has to search all channel list items), but we'll change it later on */
     $('#channels li').removeClass('selected');
-    $('#channels li:contains(' + channelObject.name + ')').addClass('selected');
+
+    // #11 use channelElement to add the selected class.
+    // comment this out as this is inefficient
+    // $('#channels li:contains(' + channelObject.name + ')').addClass('selected');
+    $(channelElement).addClass('selected');
+
 
     /* store selected channel in global variable */
     currentChannel = channelObject;
+    //#11 #new #clear all messages in the container
+    $('#messages').empty();
+    //#11 show all channel's messages
+    showMessages();
 }
 
 /* liking a channel on #click */
@@ -105,6 +114,7 @@ function loadEmojis() {
     var emojis = require('emojis-list');
     $('#emojis').empty();
     for (emoji in emojis) {
+      //console.log(emojis[emoji]);
         $('#emojis').append(emojis[emoji] + " ");
     }
 }
@@ -120,7 +130,7 @@ function Message(text) {
     this.latitude = currentLocation.latitude;
     this.longitude = currentLocation.longitude;
     // set dates
-    this.createdOn = new Date() //now
+    this.createdOn = new Date(); //now
     this.expiresOn = new Date(Date.now() + 15 * 60 * 1000); // mins * secs * msecs
     // set text
     this.text = text;
@@ -157,6 +167,8 @@ function sendMessage() {
 
     // clear the #message input
     $('#message').val('');
+    // #11 clear counter
+    document.getElementById("txtcounter").innerHTML = '';
 }
 
 /**
@@ -176,7 +188,7 @@ function createMessageElement(messageObject) {
         '">' +
         '<h3><a href="http://w3w.co/' + messageObject.createdBy + '" target="_blank">'+
         '<strong>' + messageObject.createdBy + '</strong></a>' +
-        messageObject.createdOn.toLocaleString() +
+        //messageObject.createdOn.toLocaleString() +
         '<em>' + expiresIn + ' min. left</em></h3>' +
         '<p>' + messageObject.text + '</p>' +
         '<button class="accent">+5 min.</button>' +
@@ -224,7 +236,14 @@ function listChannels(criterion) {
     /* #10 append channels from #array with a #for loop */
     for (i = 0; i < channels.length; i++) {
         $('#channels ul').append(createChannelElement(channels[i]));
+        /* #11 identify if the newly created <li> channelElement is the currentChannel
+        *  then add the selected class to it
+        */
+        if (currentChannel.name == channels[i].name) {
+          $('#channels ul li:last-child').addClass('selected');
+        }
     };
+
 }
 
 /**
@@ -311,6 +330,11 @@ function createChannelElement(channelObject) {
     // create a channel
     var channel = $('<li>').text(channelObject.name);
 
+    // #11 add listener onclick to the list item.
+    $(channel).click(function() {
+      switchChannel(channelObject, this);
+    });
+
     // create and append channel meta
     var meta = $('<span>').addClass('channel-meta').appendTo(channel);
 
@@ -354,4 +378,43 @@ function abortCreationMode() {
     $('#app-bar-create').removeClass('show');
     $('#button-create').hide();
     $('#button-send').show();
+}
+
+// #11 Ready function to house scripts that run when page is loaded
+$(function() {
+  listChannels(compareNew);
+  loadEmojis();
+  showMessages();
+
+  // #11 add enter key to send message
+  document.getElementById("message")
+    .addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+        document.getElementById("button-send").click();
+    }
+  });
+
+  // #11 add counter to message
+  document.getElementById("message")
+    .addEventListener("keyup", function(event) {
+    console.log(document.getElementById("message").value.length + "/140");
+    event.preventDefault();
+    if (document.getElementById("message").value.length > 0) {
+      document.getElementById("txtcounter").innerHTML =
+      document.getElementById("message").value.length + "/140";
+    } else {
+      document.getElementById("txtcounter").innerHTML = '';
+    }
+  });
+console.log('App is initialized');
+});
+
+
+
+// #11 this function shows the messages of the current channelChannel
+function showMessages () {
+  $.each(currentChannel.messages, function( i, value) {
+    $('#messages').append(createMessageElement(currentChannel.messages[i]));
+  });
 }
