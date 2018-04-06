@@ -386,28 +386,8 @@ $(document).ready(function() {
   loadEmojis();
   showMessages();
 
-  // #11 add enter key to send message
-  document.getElementById("message")
-    .addEventListener("keyup", function(event) {
-    event.preventDefault();
-    if (event.keyCode === 13) {
-        document.getElementById("button-send").click();
-    }
-  });
 
-  // #11 add counter to message
-  document.getElementById("message")
-    .addEventListener("keyup", function(event) {
-    console.log(document.getElementById("message").value.length + "/140");
-    event.preventDefault();
-    if (document.getElementById("message").value.length > 0) {
-      document.getElementById("txtcounter").innerHTML =
-      document.getElementById("message").value.length + "/140";
-    } else {
-      document.getElementById("txtcounter").innerHTML = '';
-    }
-  });
-console.log('App is initialized');
+  console.log('App is initialized');
 });
 
 
